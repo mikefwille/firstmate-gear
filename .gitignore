@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# dev-harness render artifacts (see fleet-dashboard/_demo.py, _shot.py)
+_shot.svg
+_shot.png
+_shot.typescript
+
+# Lavish review-session scratch (regenerable working files)
+.lavish/
+
+# macOS
+.DS_Store
+
+# build artifacts
+dist/

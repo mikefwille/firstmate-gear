@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Launcher for the reading room. Runs the single-file uv script, which
+# self-bootstraps its deps (Textual) on first run.  ./fm-read [query]
+set -euo pipefail
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec uv run --quiet "$here/fm_read.py" "$@"
