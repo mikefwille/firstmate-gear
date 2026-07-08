@@ -5,9 +5,13 @@
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" /></a>
 </p>
 
-<h3 align="center">Extra gear for your firstmate fleet.</h3>
+<h3 align="center">Watch one board. See every crew.</h3>
 
-Companion tools for [firstmate](https://github.com/kunchenguid/firstmate), the agent-orchestration template where you talk to one agent and it runs a crew for you.
+<p align="center">
+  <img src="fleet-dashboard/media/fleet-board-live.png" alt="fm-status: the live firstmate fleet board, a firstmate session on the left and the fleet board on the right" width="900" />
+</p>
+
+Extra gear for your firstmate fleet: companion tools for [firstmate](https://github.com/kunchenguid/firstmate), the agent-orchestration template where you talk to one agent and it runs a crew for you.
 firstmate gives you the crew; this repo outfits the captain.
 Everything here is read-only over a firstmate home's on-disk state, so it is always safe to point at a live fleet.
 
