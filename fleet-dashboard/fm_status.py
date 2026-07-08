@@ -17,14 +17,17 @@ does this want?":
   🔴 red     needs me - a real ask (decide / approve / merge / read) OR it broke.
              Shows the action AND the link to get there.
 
-  fm-status                one-shot render (semaphore cards)
-  fm-status --watch        live, scrollable board (jk/↑↓ · space/b page · g/G · q)
-  fm-status --watch 2      redraw every 2s
+  fm-status                live, scrollable board (jk/↑↓ · space/b page · g/G · q)
+  fm-status --snapshot     one-shot render (semaphore cards), then exit
+  fm-status --watch 2      live board, redraw every 2s (default 5)
   fm-status --table        dense one-row-per-job table instead of cards
   fm-status --roadmap      per-project timeline: done ✓ · active ●/●/● · queued ☐
   fm-status --roadmap accrete   just the projects matching "accrete"
   fm-status --no-done      hide the "recently done" tail
   FM_HOME=/path fm-status  point at a different firstmate home
+
+When stdout is not a terminal (piped, redirected, CI), fm-status snapshots
+once instead of watching, so it never hangs a pipe.
 
 The semaphore maps color to the captain's action, not to internal state;
 reconciled truth over log echo (fm-crew-state is authority); quiet when
@@ -59,6 +62,7 @@ from rich.text import Text
 
 WATCHER_HEALTHY_S = 180          # <= this since last beat = healthy
 DONE_DEFAULT = 5                 # recently-done rows shown by default
+WATCH_INTERVAL_S = 5.0           # live-board reload cadence unless --watch SECS says otherwise
 
 STYLE = {
     "green": "bright_green",
@@ -965,9 +969,13 @@ def resolve_home(cli_home: Path | None, prog: str) -> Path | None:
 def main() -> int:
     ap = argparse.ArgumentParser(
         prog="fm-status", description="firstmate fleet board")
-    ap.add_argument("--watch", nargs="?", const=5, type=float, default=None,
-                    metavar="SECS", help="live scrollable board, reload every SECS "
-                    "(default 5); scroll jk/↑↓ · space/b · g/G · q to quit")
+    mode = ap.add_mutually_exclusive_group()
+    mode.add_argument("--watch", nargs="?", const=WATCH_INTERVAL_S, type=float, default=None,
+                      metavar="SECS", help="live scrollable board (the default in a terminal), "
+                      f"reload every SECS (default {WATCH_INTERVAL_S:g}); "
+                      "scroll jk/↑↓ · space/b · g/G · q to quit")
+    mode.add_argument("--snapshot", action="store_true",
+                      help="render once and exit (automatic when stdout isn't a terminal)")
     ap.add_argument("--home", type=Path, default=None,
                     help="firstmate home (default: $FM_HOME, else auto-detected "
                     "from the current directory)")
@@ -1000,14 +1008,18 @@ def main() -> int:
             return render_roadmap(fleet, home, console.width, args.project)
         return render(fleet, console, show_done, view)
 
-    if args.watch is None:
+    # Watch is the default, but only into a real terminal: piped/redirected output
+    # (fm-status | grep, CI) snapshots once so it never hangs a pipe - even when
+    # --watch was passed explicitly.
+    if args.snapshot or not sys.stdout.isatty():
         console.print(frame())
         return 0
 
     # Alternate screen (like top/htop): the whole pane is repainted every refresh,
     # so a terminal RESIZE redraws cleanly. run_watch adds a scrollable viewport on
     # top so a tall fleet stays fully reachable instead of cropping off the bottom.
-    return run_watch(console, frame, args.watch)
+    return run_watch(console, frame,
+                     args.watch if args.watch is not None else WATCH_INTERVAL_S)
 
 
 if __name__ == "__main__":

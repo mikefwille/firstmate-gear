@@ -41,7 +41,7 @@ Or clone and run the scripts directly - each is self-bootstrapping:
 
 ```sh
 git clone https://github.com/mikefwille/firstmate-gear
-firstmate-gear/fleet-dashboard/fm-status --watch
+firstmate-gear/fleet-dashboard/fm-status
 ```
 
 ## Quick start
@@ -50,7 +50,7 @@ firstmate-gear/fleet-dashboard/fm-status --watch
 
 ```sh
 cd your/firstmate
-fm-status --watch    # the live board; q to quit
+fm-status            # the live board; q to quit (--snapshot for a one-shot render)
 fm-read              # the reading room
 ```
 
@@ -60,7 +60,7 @@ Anywhere inside a firstmate home - the primary or a secondmate home - just works
 To target a home from somewhere else, set `$FM_HOME` or pass `--home`:
 
 ```sh
-FM_HOME=~/code/firstmate fm-status --watch
+FM_HOME=~/code/firstmate fm-status
 fm-read --home ~/code/firstmate
 ```
 
