@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Thin launcher for the fleet board. Runs the single-file uv script, which
-# self-bootstraps its deps (Rich) on first run. Just: ./fm-status [--watch]
+# self-bootstraps its deps (Rich) on first run. Just: ./fm-status (live board;
+# --snapshot for a one-shot render)
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 exec uv run --quiet "$here/fm_status.py" "$@"

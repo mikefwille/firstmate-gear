@@ -29,9 +29,9 @@ The call comes from `fm-crew-state.sh` (the authority) plus what firstmate last 
 Install once (see the [repo README](../README.md)), then run it from anywhere inside a firstmate home:
 
 ```sh
-fm-status              # one-shot render (semaphore cards)
-fm-status --watch      # live, scrollable board (reloads every 5s)
-fm-status --watch 2    # reload every 2s
+fm-status              # live, scrollable board (reloads every 5s; q to quit)
+fm-status --snapshot   # one-shot render (semaphore cards), then exit
+fm-status --watch 2    # live board, reload every 2s
 fm-status --roadmap    # per-project timeline (see below)
 fm-status --roadmap accrete   # just projects matching "accrete"
 fm-status --table      # dense one-row-per-job table instead of cards
@@ -41,7 +41,7 @@ FM_HOME=/path fm-status   # point at a firstmate home from anywhere
 
 It finds the home like git finds a repo: `--home` wins, then `$FM_HOME`, then it walks up from your current directory. From a clone, `./fm-status` runs the script directly (requires [`uv`](https://docs.astral.sh/uv/)).
 
-`--watch` runs in the alternate-screen buffer (like `top`/`htop`), so **resizing the terminal repaints cleanly** instead of garbling, and your original screen is restored on `q` / Ctrl-C.
+The live board (the default) runs in the alternate-screen buffer (like `top`/`htop`), so **resizing the terminal repaints cleanly** instead of garbling, and your original screen is restored on `q` / Ctrl-C. When stdout isn't a terminal - piped (`fm-status | grep`), redirected, or in CI - it snapshots once instead, so it never hangs a pipe; `--snapshot` forces that one-shot render anywhere.
 
 ### Scrolling
 
@@ -54,7 +54,7 @@ A busy fleet is taller than any pane, so the live board is a **scrollable viewpo
 | `g` / `G` | top / bottom |
 | `q` | quit |
 
-When the board overflows, the bottom row is a live position indicator - `▲▼ 1-56/59 …` - showing where you are and which way there's more. Scrolling responds instantly and **doesn't pause the live refresh**: the fleet keeps reconciling on the `--watch` interval while you read.
+When the board overflows, the bottom row is a live position indicator - `▲▼ 1-56/59 …` - showing where you are and which way there's more. Scrolling responds instantly and **doesn't pause the live refresh**: the fleet keeps reconciling on the reload interval (5s, or whatever `--watch SECS` says) while you read.
 
 ![The live board scrolled part-way through a busy fleet, with the position indicator pinned to the bottom row.](media/scrollable-board.png)
 
